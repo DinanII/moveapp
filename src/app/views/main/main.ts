@@ -1,5 +1,5 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 
 @Component({
   imports: [RouterOutlet],
@@ -9,4 +9,9 @@ import { RouterOutlet } from '@angular/router';
 })
 export class main {
   protected readonly title = signal('move');
+  private router = inject(Router);
+
+  ngOnInit(){
+    this.router.navigate(['permissions'])
+  }
 }
