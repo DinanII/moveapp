@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">move</string>
+    <string name="title_activity_main">move</string>
+    <string name="package_name">net.dinan.move</string>
+    <string name="custom_url_scheme">net.dinan.move</string>
+</resources>
