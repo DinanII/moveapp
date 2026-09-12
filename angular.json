@@ -24,8 +24,7 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"],
-            "polyfills": ["@angular/localize/init"]
+            "styles": ["src/styles.css"]
           },
           "configurations": {
             "production": {
