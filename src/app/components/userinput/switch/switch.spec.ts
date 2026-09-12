@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CheckBox } from './check-box';
+import { Switch } from './switch';
 
-describe('CheckBox', () => {
-  let component: CheckBox;
-  let fixture: ComponentFixture<CheckBox>;
+describe('Switch', () => {
+  let component: Switch;
+  let fixture: ComponentFixture<Switch>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CheckBox],
+      imports: [Switch],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CheckBox);
+    fixture = TestBed.createComponent(Switch);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
