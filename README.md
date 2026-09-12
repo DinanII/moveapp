@@ -10,6 +10,11 @@ The application is currently in development and is not available in any applicat
 This project is created as a hybrid mobile application that's capable to run on Android as well as iOS devices. However, the focus will be directed towards Android due to the
 availability of development and testing resources.
 
+Things to add
+
+* The use of sync.sh and reason why it has been created.
+* Standard commands, like `npm run start` or `ng start` and `npm run build` or `ng build`.
+
 ### Frameworks and languages
 
 This project is created as an [Angular](https://angular.dev) application (not AngularJS), the cross-platform native runtime for webapps called [CapacitorJS](https://capacitorjs.com) is installed as an NPM-package. This so
