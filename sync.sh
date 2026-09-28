@@ -22,11 +22,12 @@ echo "=====================================================";
 # Finally, sync the output with the Android project.
 npx cap sync android
 
-echo "=====================================================";
-echo "";
-echo "Syncing with Android with 'npx cap sync ios'";
-echo "";
-echo "=====================================================";
+# The iOS platform is not (yet) added.
+#echo "=====================================================";
+#echo "";
+#echo "Syncing with Android with 'npx cap sync ios'";
+#echo "";
+#echo "=====================================================";
 
 # And sync the output with the iOS project.
-npx cap sync ios
+#npx cap sync ios
