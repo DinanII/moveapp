@@ -37,6 +37,15 @@ export class Switch {
   @Input({required: false}) intialValue: boolean = false
 
   /**
+   * Optional. Initially disable the switch input control. Leave empty or pass true
+   * to enable the element
+   */
+  @Input({required: false}) initialEnabled: boolean = true
+
+
+  protected isEnabled = true;
+
+  /**
    * An output that emits a boolean when the switch is toggled.
    * true = switch is turned on, false = switch is turned off.
    */
@@ -58,6 +67,18 @@ export class Switch {
       return;
     }
     console.error(`isChecked is not of the expected type boolean. Actual type: ${typeof isChecked}, value: ${isChecked}`);
+  }
+
+  ngOnInit() {
+    this.isEnabled = this.initialEnabled;
+  }
+
+  public setIsEnabled(isEnabled: boolean) {
+    this.isEnabled = isEnabled
+  }
+
+  public getIsEnabled(): boolean {
+    return this.isEnabled;
   }
 }
 
