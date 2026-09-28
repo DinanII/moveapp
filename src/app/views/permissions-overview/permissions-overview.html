@@ -2,5 +2,5 @@
 <p>In order for the application to work properly, some permissions are required to be given. These permissions are listed below.</p>
 
 <div>
-    <app-switch labelText="Location permission" (onSwitchToggle)="setLocationPerm($event)" />
+    <app-switch labelText="Location permission" [intialValue]="isLocPermitted" (onSwitchToggle)="askLocPerm($event)" />
 </div>

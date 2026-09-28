@@ -36,16 +36,6 @@
     </application>
 
     <!-- Permissions -->
-    
-    <!-- Geolocation Plugin -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <!-- Keep out as long the app does not absolutely require GPS capabilities
-    read capacitor docs for more info: https://capacitorjs.com/docs/apis/geolocation -->
-    
-    <!-- <uses-feature android:name="android.hardware.location.gps" /> -->
-
-    <!-- Leave out until strictly needed -->
-    <!-- <uses-permission android:name="android.permission.INTERNET" /> -->
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
