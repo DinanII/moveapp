@@ -15,6 +15,16 @@ Things to add
 * The use of sync.sh and reason why it has been created.
 * Standard commands, like `npm run start` or `ng start` and `npm run build` or `ng build`.
 
+**iOS not supported**
+
+Since building the application for iPhones requires a modern enough MacOS device (like a Macbook, iMac, Mac Mini ...), which is not available, the project will not support iOS for the forseeable future. It is not posible to build the application without one of these devices and there is no known workable and/or legal alternative.
+
+Below a list with things that need to be done in order to let this project work with iOS, might get inaccurate over time.
+
+- Adding the [Capacitor iOS platform](https://capacitorjs.com/docs/ios#adding-the-ios-platform).
+- Adding the iOS permission for [location services](https://capacitorjs.com/docs/apis/geolocation).
+- Adding the iOS permission for [background services](https://capacitorjs.com/docs/apis/background-runner).
+
 ### Frameworks and languages
 
 This project is created as an [Angular](https://angular.dev) application (not AngularJS), the cross-platform native runtime for webapps called [CapacitorJS](https://capacitorjs.com) is installed as an NPM-package. This so
