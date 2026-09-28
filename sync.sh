@@ -9,3 +9,6 @@ mv ./dist/move/browser/* ./dist
 
 # Finally, sync the output with the Android project.
 npx cap sync android
+
+# And sync the output with the iOS project.
+npx cap sync ios
