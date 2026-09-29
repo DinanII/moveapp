@@ -1,4 +1,4 @@
 <div class="form-check form-switch">
-    <input class="form-check-input" type="checkbox" [checked]="intialValue" id="checkNativeSwitch" switch (input)="onSwitchToggled($event)" [disabled]="!isEnabled"  >
+    <input class="form-check-input" type="checkbox" [checked]="inputValue" id="checkNativeSwitch" switch (click)="onSwitchToggled($event)" [disabled]="!isEnabled"  >
     <label class="form-check-label" for="checkNativeSwitch">{{ labelText }}</label>
 </div>

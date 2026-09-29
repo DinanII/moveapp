@@ -1,6 +1,11 @@
 <h2>Permissions</h2>
-<p>In order for the application to work properly, some permissions are required to be given. These permissions are listed below.</p>
+<p>In order for the application to work properly, some permissions are required to be given. These permissions are
+    listed below.</p>
 
 <div>
-    <app-switch labelText="Location permission" [intialValue]="isLocPermitted" (onSwitchToggle)="askLocPerm($event)" />
+    <app-switch labelText="Location permission" [inputValue]="isLocPermitted()" [isEnabled]="!isLocPermitted()"
+        (onSwitchToggle)="askLocPerm()" />
+
+    <p>Permission: {{ isLocPermitted() }}</p>
+    <p>Enabled: {{ !isLocPermitted() }}</p>
 </div>

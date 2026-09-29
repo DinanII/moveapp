@@ -34,16 +34,14 @@ export class Switch {
    * Pass true to set the switch on. If the switch shouls be turned off, 
    * do not pass this param or set to false
    */
-  @Input({required: false}) intialValue: boolean = false
+  @Input({ required: false }) inputValue: boolean = false
 
   /**
    * Optional. Initially disable the switch input control. Leave empty or pass true
    * to enable the element
    */
-  @Input({required: false}) initialEnabled: boolean = true
+  @Input({ required: false }) isEnabled: boolean = true
 
-
-  protected isEnabled = true;
 
   /**
    * An output that emits a boolean when the switch is toggled.
@@ -58,27 +56,16 @@ export class Switch {
    * @returns void
    */
   protected onSwitchToggled(event: Event): void {
+    event.preventDefault();
     // Extract the input value from the element to make sure it's checked
     const isChecked = (event.target as HTMLInputElement).checked;
 
     // Ensure it's a bool
-    if(typeof isChecked == 'boolean') {
+    if (typeof isChecked == 'boolean') {
       this.onSwitchToggle.emit(isChecked);
       return;
     }
     console.error(`isChecked is not of the expected type boolean. Actual type: ${typeof isChecked}, value: ${isChecked}`);
-  }
-
-  ngOnInit() {
-    this.isEnabled = this.initialEnabled;
-  }
-
-  public setIsEnabled(isEnabled: boolean) {
-    this.isEnabled = isEnabled
-  }
-
-  public getIsEnabled(): boolean {
-    return this.isEnabled;
   }
 }
 
