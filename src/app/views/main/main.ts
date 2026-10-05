@@ -16,5 +16,6 @@ export class main {
       this.router.navigate(['permissions'])
       return
     }
+    this.router.navigate(['activities'])
   }
 }
