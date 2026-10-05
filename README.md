@@ -35,8 +35,22 @@ The Angular readme has it's own file [[angular.md]].
 
 **API's**
 
-Here some Capacitor API's the projects uses or are API's I am planning to include
+Here some Capacitor API's the projects uses or are API's I am planning to utilize or am just looking at of curiousity.
 
-* https://capacitorjs.com/docs/apis/background-runner
-* https://capacitorjs.com/docs/apis/filesystem
-* https://capacitorjs.com/docs/apis/geolocation
+_Background runner_
+
+https://capacitorjs.com/docs/apis/background-runner
+
+_Filesystem_
+
+https://capacitorjs.com/docs/apis/filesystem
+
+_GeoLocation_
+
+https://capacitorjs.com/docs/apis/geolocation
+
+_Storage_
+
+See [Capacitor's doc](https://capacitorjs.com/docs/guides/storage) about storage. Localstorage and indexedDB cannot be used as persistent storage. It's explained there in more detail.
+
+There is a [SQLite community plugin](https://github.com/capacitor-community/sqlite) for Capacitor projects, Capacitor team only provides SQLite support for enterprise solutions.
