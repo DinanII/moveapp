@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-
+import { GeolocationService } from '../../services/GeolocationService';
 @Component({
   imports: [RouterOutlet],
   selector: 'app-main',
@@ -10,8 +10,11 @@ import { Router, RouterOutlet } from '@angular/router';
 export class main {
   protected readonly title = signal('move');
   private router = inject(Router);
-
-  ngOnInit(){
-    this.router.navigate(['permissions'])
+  private geoLocService = inject(GeolocationService)
+  async ngOnInit(){
+    if(!await this.geoLocService.getPermissionState()) {
+      this.router.navigate(['permissions'])
+      return
+    }
   }
 }
