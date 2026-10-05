@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   imports: [],
@@ -6,4 +7,11 @@ import { Component } from '@angular/core';
   styleUrl: './activities-overview.css',
   templateUrl: './activities-overview.html',
 })
-export class ActivitiesOverview {}
+export class ActivitiesOverview {
+
+  private router = inject(Router)
+
+  protected routeToActivity() {
+    this.router.navigate(['activities/create'])
+  }
+}
