@@ -3,6 +3,7 @@ import { inject, Service } from '@angular/core';
 import { CapacitorSQLite } from '@capacitor-community/sqlite';
 import { Capacitor, HttpResponse } from '@capacitor/core';
 import { BehaviorSubject, Observable, switchMap, of, from } from 'rxjs';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
 @Service()
 export class DatabaseService {
