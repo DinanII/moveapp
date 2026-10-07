@@ -46,7 +46,7 @@ export class DatabaseService {
      * Injection of the Ionic AlertController to notify the user in case when an unexpected event occurs.
      * @private
      */
-    private alertCtrl = inject(AlertController);
+    // private alertCtrl = inject(AlertController);
 
     // #region Start
 
@@ -85,12 +85,12 @@ export class DatabaseService {
         } catch (err) {
             console.error(`Database could not be initialized: ${err}`);
 
-            const alert = await this.alertCtrl.create({
-                header: 'Database error',
-                message: 'This app cannot run without database access.',
-                buttons: ['OK'],
-            });
-            await alert.present();
+            // const alert = await this.alertCtrl.create({
+            //     header: 'Database error',
+            //     message: 'This app cannot run without database access.',
+            //     buttons: ['OK'],
+            // });
+            // await alert.present();
         }
     }
     // #endregion
@@ -127,12 +127,12 @@ export class DatabaseService {
                 .catch(async (reason) => {
                     console.error(`Database could not be initialized:`, reason);
 
-                    const alert = await this.alertCtrl.create({
-                        header: 'Database error',
-                        message: 'This app cannot run without database access.',
-                        buttons: ['OK'],
-                    });
-                    await alert.present();
+                    // const alert = await this.alertCtrl.create({
+                    //     header: 'Database error',
+                    //     message: 'This app cannot run without database access.',
+                    //     buttons: ['OK'],
+                    // });
+                    // await alert.present();
                 })
                 .then((createDbFulfilled) => {
                     console.log("Database has been created", createDbFulfilled)
