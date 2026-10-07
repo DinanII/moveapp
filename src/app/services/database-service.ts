@@ -28,7 +28,7 @@ export class DatabaseService {
     private dbReadySubject = new BehaviorSubject<boolean>(false);
 
     /*
-  
+
     */
     /**
      * dbReady: Public observable others (like components, services) where this service is injected in can read.
@@ -194,7 +194,7 @@ export class DatabaseService {
             this.http
                 .get('assets/mockupdata.json', { observe: 'response' })
                 .subscribe({
-                    next: async (response: HttpResponse<any>) => {
+                    next: async (response) => {
                         try {
                             const jsonstring = JSON.stringify(response.body);
                             console.log(`Downloaded JSON Database ${jsonstring}`);
