@@ -8,9 +8,9 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 @Service()
 export class DatabaseService {
     /**
- * What the key is named where the database name is stored under in the SecureStorage Plugin
- * @private
- */
+     * What the key is named where the database name is stored under in the SecureStorage Plugin
+     * @private
+     */
     private readonly DB_NAME_KEY = 'db_name';
 
 
@@ -27,9 +27,6 @@ export class DatabaseService {
      */
     private dbReadySubject = new BehaviorSubject<boolean>(false);
 
-    /*
-
-    */
     /**
      * dbReady: Public observable others (like components, services) where this service is injected in can read.
      * This observable is readonly to prevent accidental (outside) edits.
