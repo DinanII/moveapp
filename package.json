@@ -23,6 +23,7 @@
     "@capacitor/core": "^8.5.2",
     "@capacitor/geolocation": "^8.2.2",
     "bootstrap": "^5.3.8",
+    "capacitor-secure-storage-plugin": "^0.13.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
