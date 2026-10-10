@@ -11,7 +11,10 @@ npm run build
 
 # Move the output to the upper level of the folder dist
 # so cap sync android knows the build output is there.
-mv ./dist/move/browser/* ./dist
+if [ -d "./dist/migrations" ]; then
+    rm -rf ./dist/migrations/*;
+fi
+mv ./dist/move/browser/* ./dist;
 
 echo "=====================================================";
 echo "";
