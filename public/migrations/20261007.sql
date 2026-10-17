@@ -4,12 +4,13 @@ PRAGMA foreign_keys = 1;
 
 CREATE TABLE IF NOT EXISTS "activities" (
 	"ac_id"	INTEGER PRIMARY KEY,
+	"ac_name" VARCHAR(50),
 	"ac_started_at"	INTEGER NOT NULL,
 	"ac_ended_at"	INTEGER NOT NULL
 	-- "ac_timezone" VARCHAR(3) NOT NULL,
 	-- PRIMARY KEY("ac_id")
 );
-INSERT INTO `activities` (ac_started_at, ac_ended_at) VALUES (1791552070,1791553990);
+INSERT INTO `activities` (ac_name, ac_started_at, ac_ended_at) VALUES ("Test activiteit",1791552070,1791553990);
 
 CREATE TABLE IF NOT EXISTS "geolocation_points" (
 	"glp_id"	INTEGER PRIMARY KEY,

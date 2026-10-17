@@ -1,0 +1,9 @@
+<div [classList]="'form-field' + containerStyles">
+    <label [htmlFor]="textBoxName" class="form-label">{{ labelText }}</label>
+    <input type="text" [name]="textBoxName" [id]="textBoxId" class="form-control" [placeholder]="placeholderText" [value]="prefillText" (change)="onTextChanged($event)"  >
+    @if (fieldComment.length > 0) {
+        <div class="form-text">
+            {{ fieldComment }}
+        </div>
+    }
+</div>

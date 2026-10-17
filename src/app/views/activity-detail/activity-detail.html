@@ -1,1 +1,10 @@
-<p>activity-detail works!</p>
+<h1>Activity Details</h1>
+<app-text-box
+    [textBoxId]="'activityName'"
+    [textBoxName]="'activityName'"
+    containerStyles="w-50"
+    [fieldComment]="'A recognizable name for this activity.'"
+    [labelText]="'Activity name'"
+    [placeholderText]="'My amazing adventure!'"
+    (onTextChange)="onNameChange($event)"
+/>
