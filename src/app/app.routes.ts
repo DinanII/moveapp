@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { main } from './views/main/main';
 import { PermissionsOverview } from './views/permissions-overview/permissions-overview';
 import { ActivitiesOverview } from './views/activities-overview/activities-overview';
-import { ActivityCreate } from './views/activity-create/activity-create';
+import { ActivityDetail } from './views/activity-detail/activity-detail';
 export const routes: Routes = [
     {
         path: "",
@@ -17,7 +17,7 @@ export const routes: Routes = [
         component: ActivitiesOverview
     },
     {
-        path: "activities/create",
-        component: ActivityCreate
+        path: "activities/detail",
+        component: ActivityDetail
     }
 ];
