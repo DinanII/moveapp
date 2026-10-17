@@ -164,7 +164,7 @@ export class DatabaseManager {
             console.trace('Creating database connection during initial setup');
             console.log("INITIALIZING DATABASE ...")
             try {
-                const response = await fetch("/migrations/20261007.sql")
+                const response = await fetch("/migrations/initial_db.sql")
                 if (!response.ok) {
                     console.error(`Failed to fetch SQL data for local DB, the response has a non-ok status`)
                     reject(`${response.status} - ${response.statusText}`)
@@ -214,7 +214,10 @@ export class DatabaseManager {
     // #endregion
 
     // #region Queries
+
+
     // TODO: values should be one of the following: string, number, null,
+
     /**
      * 
      * @param mode There are roughly speaking 2 ways to perform queries; query (looking a value up in a table, with optional joins to other tables) and modify/run that modifies
@@ -241,6 +244,8 @@ export class DatabaseManager {
      * SELECT * FROM products LEFT JOIN vendors ON vendors.id = products.vendorid WHERE products.id = ?;
      * SELECT * FROM products;
      */
+    public static async performQuery(mode: "modify", statement: string, values?: any[]): Promise<capSQLiteChanges | null>;
+    public static async performQuery(mode: "search", statement: string, values?: any[]): Promise<capSQLiteValues | null>;
     public static async performQuery(mode: "search" | "modify", statement: string, values: any[] = []): Promise<capSQLiteValues | capSQLiteChanges | null> {
         // TODO: Replace this with the observable
         if (DatabaseManager.dbReadySubject.value) {

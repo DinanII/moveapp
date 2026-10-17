@@ -17,7 +17,7 @@ export const routes: Routes = [
         component: ActivitiesOverview
     },
     {
-        path: "activities/detail",
+        path: "activities/detail/:id",
         component: ActivityDetail
     }
 ];

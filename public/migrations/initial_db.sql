@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS "activities" (
 	"ac_id"	INTEGER PRIMARY KEY,
 	"ac_name" VARCHAR(50),
 	"ac_started_at"	INTEGER NOT NULL,
-	"ac_ended_at"	INTEGER NOT NULL
+	"ac_ended_at"	INTEGER
 	-- "ac_timezone" VARCHAR(3) NOT NULL,
 	-- PRIMARY KEY("ac_id")
 );
