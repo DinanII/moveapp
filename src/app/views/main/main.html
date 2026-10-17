@@ -1,2 +1,4 @@
-<button class="btn btn-danger" (click)="resetDatabase()" >Reset database</button>
+<button class="btn btn-danger" (click)="resetDatabase()">Reset database</button>
+<button class="btn btn-primary" [disabled]="isTracking()" (click)="startTracking()">Start Tracking</button>
+<button class="btn btn-primary" [disabled]="!isTracking()" (click)="stopTracking()">Stop Tracking</button>
 <router-outlet />

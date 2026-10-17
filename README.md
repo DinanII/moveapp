@@ -23,7 +23,7 @@ Below a list with things that need to be done in order to let this project work 
 
 - Adding the [Capacitor iOS platform](https://capacitorjs.com/docs/ios#adding-the-ios-platform).
 - Adding the iOS permission for [location services](https://capacitorjs.com/docs/apis/geolocation).
-- Adding the iOS permission for [background services](https://capacitorjs.com/docs/apis/background-runner).
+- Create a service for iOS that keeps track of the users location while an Activity is ongoing. The service is called from the Angular / Capacitor app. See ActivityTrackingService for a reference point.
 
 ### Frameworks and languages
 
@@ -54,3 +54,9 @@ _Storage_
 See [Capacitor's doc](https://capacitorjs.com/docs/guides/storage) about storage. Localstorage and indexedDB cannot be used as persistent storage. It's explained there in more detail.
 
 There is a [SQLite community plugin](https://github.com/capacitor-community/sqlite) for Capacitor projects, Capacitor team only provides SQLite support for enterprise solutions.
+
+_Custom Capacitor Plugin_
+
+A custom plugin is used to track the location in the background.
+
+https://capacitorjs.com/docs/android/custom-code
