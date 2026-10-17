@@ -12,6 +12,6 @@ export class ActivitiesOverview {
   private router = inject(Router)
 
   protected routeToActivity() {
-    this.router.navigate(['activities/create'])
+    this.router.navigate(['activities/detail'])
   }
 }
