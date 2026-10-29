@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Switch } from '../../components/userinput/switch/switch';
 import { GeolocationService } from '../../services/GeolocationService';
+import { Router } from '@angular/router';
 @Component({
   imports: [Switch],
   selector: 'app-permissions-overview',
@@ -11,6 +12,7 @@ export class PermissionsOverview implements OnInit {
 
   private geoLocService = inject(GeolocationService);
 
+  private router = inject(Router)
 
   protected isLocPermitted = signal(false);
 
@@ -40,6 +42,10 @@ export class PermissionsOverview implements OnInit {
 
   private handleLocation(hasPerm: boolean) {
     this.isLocPermitted.set(hasPerm);
+  }
+
+  protected navToActivities() {
+    this.router.navigate(['activities'])
   }
 }
 // Alternative for signals: Change detection reference

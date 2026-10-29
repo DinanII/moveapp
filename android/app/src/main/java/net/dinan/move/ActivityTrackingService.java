@@ -35,17 +35,23 @@ public class ActivityTrackingService extends Service {
     public static final String ACTION_STOP = "tracking.STOP";
     public static final String ACTION_REQUESTLOCATIONS = "tracking.REQUESTLOCATIONS";
     public static final String EXTRA_ACTIVITY_ID = "activityId";
+    public static final String ACTION_STREAMLOCATIONS = "tracking.STREAMLOCATIONS";
 
     // private FusedLocationProviderClient locationClient;
     private android.location.LocationManager locationManager;
     private android.location.LocationListener locationListener;
+
+    private static int locationIndex = 0;
 
 //    private LocationCallback locationCallback;
     private BufferedWriter writer;
 
     private String activityId;
 
-    private static String tag = "ACTIVITY_TRACKING_SERVICE";
+    private boolean isTracking = false;
+
+
+  private static String tag = "ACTIVITY_TRACKING_SERVICE";
     private int pendingWrites = 0;
 
     @Override
@@ -78,27 +84,26 @@ public class ActivityTrackingService extends Service {
         if (ACTION_START.equals(action)) {
           Log.d(ActivityTrackingService.tag,"Start command registered");
 
-            String id = intent.getStringExtra(EXTRA_ACTIVITY_ID);
-
+//            String id = intent.getStringExtra(EXTRA_ACTIVITY_ID);
             // || !id.matches("[a-fA-F0-9-]{1,64}")
-            if (id == null) {
-              Log.d(ActivityTrackingService.tag,"Stopping, since ID is null (to avoid replacing active recording)");
-              stopSelf();
-                return START_NOT_STICKY;
-            }
+//            if (id == null) {
+//              Log.w(ActivityTrackingService.tag,"Stopping, since ID is null (to avoid replacing active recording)");
+//              stopSelf();
+//                return START_NOT_STICKY;
+//            }
+//
+//            // Do not accidentally replace an active recording.
+//            if (writer != null) {
+//                if (id.equals(activityId)) {
+//                  Log.d(ActivityTrackingService.tag,"Writer active, id is same as activity id)");
+//                  return START_NOT_STICKY;
+//                }
+//              Log.d(ActivityTrackingService.tag,"Stopping, since writer isn't null (to avoid replacing active recording)");
+//              stopTracking();
+//            }
 
-            // Do not accidentally replace an active recording.
-            if (writer != null) {
-                if (id.equals(activityId)) {
-                  Log.d(ActivityTrackingService.tag,"Writer active, id is same as activity id)");
-                  return START_NOT_STICKY;
-                }
-              Log.d(ActivityTrackingService.tag,"Stopping, since writer isn't null (to avoid replacing active recording)");
-              stopTracking();
-            }
-
-            activityId = id;
-
+            activityId = intent.getStringExtra(EXTRA_ACTIVITY_ID);
+            isTracking = true;
             Notification notification =
                 new NotificationCompat.Builder(this, "activity_tracking")
                     .setContentTitle("Activity in progress")
@@ -135,6 +140,10 @@ public class ActivityTrackingService extends Service {
             }
         }
 
+        if(ACTION_STREAMLOCATIONS.equals(action)){
+          streamLocations();
+        }
+
         if(ACTION_REQUESTLOCATIONS.equals(action)) {
           requestLocations();
         }
@@ -147,13 +156,15 @@ public class ActivityTrackingService extends Service {
       getFilesDir(), "activity-" + activityId + ".jsonl"
     );
 
-//    if(file.canRead()) {
-//
-//    }
   }
 
 
+  private void streamLocations() {
+    if(locationIndex == 0) {
 
+    }
+
+  }
 
 
   private void startLocationUpdates() {
@@ -182,11 +193,14 @@ public class ActivityTrackingService extends Service {
   }
 
     private void writeLocation(Location location) {
-        Log.d(ActivityTrackingService.tag,"writeLocation (attempting to write locations)..");
-       if (writer == null) return;
+      Log.d(ActivityTrackingService.tag,"writeLocation");
+      if (!isTracking || writer == null) return;
+
+      Log.d(ActivityTrackingService.tag,"writeLocation (attempting to write locations)..");
 
        try {
             JSONObject point = new JSONObject();
+            point.put("index",locationIndex);
             point.put("latitude", location.getLatitude());
             point.put("longitude", location.getLongitude());
             point.put("timestamp", location.getTime());
@@ -206,15 +220,20 @@ public class ActivityTrackingService extends Service {
            Intent intent = new Intent("net.dinan.move.LOCATION_RECORDED");
            intent.setPackage(getPackageName());
 
+           intent.putExtra("locationIndex",locationIndex);
            intent.putExtra("latitude", location.getLatitude());
            intent.putExtra("longitude", location.getLongitude());
            intent.putExtra("timestamp", location.getTime());
            intent.putExtra("accuracy", location.getAccuracy());
 
+           locationIndex += 1;
+
            sendBroadcast(intent);
        } catch (Exception e) {
             // A production version should record/report the failure
             // and expose an error state to the application.
+            pendingWrites = 0;
+            locationIndex = 0;
         }
     }
 
@@ -224,12 +243,17 @@ public class ActivityTrackingService extends Service {
         //     locationCallback = null;
         // }
       Log.d(ActivityTrackingService.tag,"Stopping tracking...");
+      isTracking = false;
+      pendingWrites = 0;
+      locationIndex = 0;
       if (locationListener != null) {
+          Log.d(tag,"Setting locationListener to NULL");
             locationManager.removeUpdates(locationListener);
             locationListener = null;
-        }
+      }
 
         if (writer != null) {
+          Log.d(tag,"Attempting to close writer.");
             try {
                 writer.flush();
                 writer.close();
@@ -237,8 +261,6 @@ public class ActivityTrackingService extends Service {
             }
             writer = null;
         }
-
-        activityId = null;
         stopForeground(STOP_FOREGROUND_REMOVE);
     }
 

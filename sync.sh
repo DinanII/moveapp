@@ -9,12 +9,22 @@ echo "=====================================================";
 # Create a default build
 npm run build
 
+echo "=====================================================";
+echo "";
+echo "Moving output to upper directory";
+echo "";
+echo "=====================================================";
+
 # Move the output to the upper level of the folder dist
 # so cap sync android knows the build output is there.
 if [ -d "./dist/migrations" ]; then
     rm -rf ./dist/migrations/*;
 fi
 mv ./dist/move/browser/* ./dist;
+
+if [ -d "./dist/media" ]; then
+    rm -rf ./dist/media;
+fi
 
 echo "=====================================================";
 echo "";

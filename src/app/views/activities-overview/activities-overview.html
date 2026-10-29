@@ -1,5 +1,52 @@
-<h1>Registered Activities</h1>
+<div class="row">
+    <h1>Registered Activities</h1>
 
-<p>This is an overview of all the activities you registered with this app. Click on an activity to view more details or create a new one!</p>
+</div>
+<div class="row">
+    <p>This is an overview of all the activities you registered with this app. Click on an activity to view more
+        details or create a new one!</p>
+</div>
+<div class="row">
+    <button (click)="routeToActivity(-1)" class="btn btn-primary w-50 mx-auto"
+        [disabled]="activityService.isActivityOngoing()">+Create</button>
+</div>
 
-<button (click)="routeToActivity()" class="btn btn-primary">+ Create</button>
+<!-- <button (click)="routeToActivity()" class="btn btn-primary">+ Create</button> -->
+<!-- <a [routerLink]="['/activities/detail','-1']" class="btn btn-primary">+ Create</a> -->
+<!-- https://thecodepoints.blogspot.com/2022/06/how-to-pass-parameters-to-route-in-angular.html -->
+
+<div class="row">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Start</th>
+                <th scope="col">End</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(activity of activityService.activities(); track $index) { <!-- track activity.id -->
+            <tr (click)="routeToActivity(activity.activityId)">
+                <td>{{ activity.activityId }}</td>
+                <td>{{ activity.activityName }}</td>
+                <td>{{ activity.startedAt | date:'yyyy-MM-dd HH:mm' }}</td>
+                <td>{{ activity.endedAt | date:'yyyy-MM-dd HH:mm' }}</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+<div class="row">
+    <!--next prev. buttons-->
+    <div class="col">
+        <button class="btn btn-primary" [disabled]="!backEnabled()" (click)="pageBack()" >Back</button>
+        <button class="btn btn-primary" [disabled]="!nextEnabled()" (click)="pageNext()" >Next</button>
+    </div>
+</div>
+<div class="row">
+    <h2>Danger zone</h2>
+    <p>Only meant for development purposes!</p>
+    <button class="btn btn-danger w-50 mx-auto" (click)="resetDatabase()">Reset database</button>
+</div>

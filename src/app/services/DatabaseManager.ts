@@ -26,6 +26,8 @@ export class DatabaseManager {
      */
     private static dbReadySubject = new BehaviorSubject<boolean>(false);
 
+    public static get isReady(): boolean { return DatabaseManager.dbReadySubject.value }
+
     /**
      * dbReady: Public observable others (like components, services) where this service is injected in can read.
      * This observable is readonly to prevent accidental (outside) edits.
@@ -43,24 +45,40 @@ export class DatabaseManager {
         return DatabaseManager.DB_NAME;
     }
 
-    private static isInitializing: boolean = false;
+    public static readonly pageSize: number = 5;
+
+    private static initPromise: Promise<void> | null = null;
+
 
     /**
      * Performs checks if database can be set up (Capacitor.isNativePlatform() must be true) and creates an {@link HTMLIonAlertElement} and logs if an errors occur.
      * Attempts to call {@link setupDatabase()}.
      */
-    static async init(): Promise<void> {
-        console.log(`DatabaseManager.init() called: ${DatabaseManager.isInitializing}`)
-        if (!DatabaseManager.isInitializing) {
-            console.log('Initializing database...');
-            console.log('Capacitor.isNativePlatform():', Capacitor.isNativePlatform());
-            console.log('Capacitor.getPlatform():', Capacitor.getPlatform());
-            if (!Capacitor.isNativePlatform()) {
-                console.error('SQLite only available on native platforms. DB init aborted');
-                return;
-            }
-            DatabaseManager.setupDatabase();
+    static init(): Promise<void> {
+        if (DatabaseManager.dbReadySubject.value) {
+            return Promise.resolve();
         }
+        if (!Capacitor.isNativePlatform()) {
+            return Promise.reject(
+                new Error("SQLite is only available on native platforms.")
+            );
+        }
+        if (!DatabaseManager.initPromise) {
+            DatabaseManager.initPromise = DatabaseManager.setupDatabase()
+                .then(() => {
+                    if (!DatabaseManager.dbReadySubject.value) {
+                        throw new Error("Database initialization completed, but the database is not ready.");
+                    }
+                })
+                .catch((error) => {
+                    // Allow a later call to retry initialization.
+                    DatabaseManager.initPromise = null;
+                    console.error(`Failed to init database: ${error}`)
+                    throw error;
+                });
+        }
+
+        return DatabaseManager.initPromise;
     }
     // #endregion
 
@@ -73,37 +91,27 @@ export class DatabaseManager {
      * @private
      */
     private static async setupDatabase(): Promise<void> {
-        DatabaseManager.isInitializing = true
-        console.log("Checking database...")
-        let isSetup: boolean = false
+        console.log("Checking database...");
+
+        let isSetup = false;
+
         try {
-            await SecureStoragePlugin.get({
-                key: DatabaseManager.DB_NAME_KEY,
-            }).then((result: { value: string }) => {
-                if (result.value != null && result.value != "") isSetup = true
-            });
-        }
-        catch (error) {
-            isSetup = false
-            console.log(`Failed to retrieve storage key: ${error}`)
+            const result = await SecureStoragePlugin.get({ key: DatabaseManager.DB_NAME_KEY });
+
+            isSetup = result.value != null && result.value !== "";
+        } catch (error) {
+            console.log(`Failed to retrieve storage key: ${error}`);
         }
 
-        if (!isSetup) {
-            await DatabaseManager.downloadAndCreateDatabase()
-                .catch(async (reason) => {
-                    console.error(`Database could not be initialized:`, JSON.stringify(reason));
-                    DatabaseManager.isInitializing = false
-                    return
-                })
-                .then((createDbFulfilled) => {
-                    console.log("Database has been created", createDbFulfilled)
-                    DatabaseManager.isInitializing = false
-                    return
-                })
-            return
+        if (isSetup) {
+            await DatabaseManager.openDatabase();
+        } else {
+            await DatabaseManager.downloadAndCreateDatabase();
         }
-        DatabaseManager.isInitializing = false
-        await DatabaseManager.openDatabase();
+
+        if (!DatabaseManager.dbReadySubject.value) {
+            throw new Error("Database setup finished without setting dbReadySubject to true.");
+        }
     }
 
     /**
@@ -160,56 +168,54 @@ export class DatabaseManager {
      * @private
      */
     private static async downloadAndCreateDatabase(): Promise<void> {
-        return new Promise(async (resolve, reject) => {
-            console.trace('Creating database connection during initial setup');
-            console.log("INITIALIZING DATABASE ...")
-            try {
-                const response = await fetch("/migrations/initial_db.sql")
-                if (!response.ok) {
-                    console.error(`Failed to fetch SQL data for local DB, the response has a non-ok status`)
-                    reject(`${response.status} - ${response.statusText}`)
-                }
-                const sqlString = await response.text()
-                console.log(`Response body: ${sqlString}`)
+        console.trace("Creating database connection during initial setup");
+        console.log("INITIALIZING DATABASE ...");
 
-                // Create connection
-                await CapacitorSQLite.createConnection({
-                    database: DatabaseManager.database,
-                });
+        const response = await fetch("/migrations/initial_db.sql");
 
-                await CapacitorSQLite.open({
-                    database: DatabaseManager.database,
-                });
+        if (!response.ok) {
+            throw new Error(
+                `Failed to fetch SQL data: ${response.status} - ${response.statusText}`
+            );
+        }
 
-                // Save to secure storage
-                await SecureStoragePlugin.set({
-                    key: DatabaseManager.DB_NAME_KEY,
-                    value: DatabaseManager.DB_NAME,
-                });
+        const sqlString = await response.text();
 
-                // Create sync table (with database parameter)
-                // await CapacitorSQLite.createSyncTable({
-                //     database: DatabaseManager.database
-                // });
+        if (!sqlString.trim()) {
+            throw new Error("The initial database SQL file is empty.");
+        }
 
-                await CapacitorSQLite.execute({
-                    statements: "PRAGMA foreign_keys = 1;",
-                    database: DatabaseManager.database
-                })
-
-                await CapacitorSQLite.execute({
-                    statements: sqlString,
-                    database: DatabaseManager.database,
-                });
-
-                // TODO: Replace this with the observable
-                DatabaseManager.dbReadySubject.next(true);
-                resolve();
-            } catch (error) {
-                console.error(`Failed to fetch or import the SQL data for local DB: ${error}`);
-            }
+        await CapacitorSQLite.createConnection({
+            database: DatabaseManager.database,
         });
+
+        await CapacitorSQLite.open({
+            database: DatabaseManager.database,
+        });
+
+        await CapacitorSQLite.execute({
+            statements: "PRAGMA foreign_keys = 1;",
+            database: DatabaseManager.database,
+        });
+
+        await CapacitorSQLite.execute({
+            statements: sqlString,
+            database: DatabaseManager.database,
+        });
+
+        await SecureStoragePlugin.set({
+            key: DatabaseManager.DB_NAME_KEY,
+            value: DatabaseManager.DB_NAME,
+        });
+
+        DatabaseManager.dbReadySubject.next(true);
+
+        console.log("Initial database created and initialized successfully.");
     }
+    // Create sync table (with database parameter)
+    // await CapacitorSQLite.createSyncTable({
+    //     database: DatabaseManager.database
+    // });
 
     // #endregion
 
@@ -222,8 +228,12 @@ export class DatabaseManager {
      * 
      * @param mode There are roughly speaking 2 ways to perform queries; query (looking a value up in a table, with optional joins to other tables) and modify/run that modifies
      * a record in some way. Pass either the string "search" (SELECT queries) or "modify" (INSERT & UPDATE) depending on your needs.
-     * @param statement The actual SQL query itself, with or without values (altough generally discouraged).
+     * @param statement The actual SQL query itself, with or without values (altough without is generally discouraged due to SQL injection).
+     * Important:  `LIMIT 50` is always placed after the submitted statement to limit the amount of retrieved records to 50. Pagination is available to the offset param.,
      * @param values The values for the query
+     * 
+     * @param offset From which index to start returning records. This param is optional and for select queries only, default is 0.
+     * 
      * @returns Promise with {@link capSQLiteValues} when a query with {@link mode} "search" is executed, a promise with {@link capSQLiteChanges}
      * when a query with {@link mode} "modify" is executed or null if the query fills (no valid mode passed or database is not (yet) ready).
      * 
@@ -245,15 +255,18 @@ export class DatabaseManager {
      * SELECT * FROM products;
      */
     public static async performQuery(mode: "modify", statement: string, values?: any[]): Promise<capSQLiteChanges | null>;
-    public static async performQuery(mode: "search", statement: string, values?: any[]): Promise<capSQLiteValues | null>;
-    public static async performQuery(mode: "search" | "modify", statement: string, values: any[] = []): Promise<capSQLiteValues | capSQLiteChanges | null> {
+    public static async performQuery(mode: "search", statement: string, values?: any[], offset?: number): Promise<capSQLiteValues | null>;
+    public static async performQuery(mode: "search" | "modify", statement: string, values: any[] = [], offset: number = 0): Promise<capSQLiteValues | capSQLiteChanges | null> {
         // TODO: Replace this with the observable
         if (DatabaseManager.dbReadySubject.value) {
             switch (mode) {
                 case "search":
+                    if(isNaN(offset) || offset < 0 || offset >= Infinity ) return null
+                    const query = `${statement} LIMIT ${DatabaseManager.pageSize} OFFSET ${offset}`
+                    console.log(`Query: ${query}`);
                     const queryResult: capSQLiteValues = await CapacitorSQLite.query({
                         database: DatabaseManager.database,
-                        statement: statement,
+                        statement: query,
                         values: values,
                     })
                     return queryResult

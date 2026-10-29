@@ -9,3 +9,4 @@
     <p>Permission: {{ isLocPermitted() }}</p>
     <p>Enabled: {{ !isLocPermitted() }}</p>
 </div>
+<button class="btn btn-primary" (click)="navToActivities()" [disabled]="!isLocPermitted()">Go to Activities</button>

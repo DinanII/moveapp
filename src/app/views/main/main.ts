@@ -4,7 +4,7 @@ import { GeolocationService } from '../../services/GeolocationService';
 import { DatabaseManager } from '../../services/DatabaseManager';
 import { ActivityTracking } from '../../services/activity-tracking.plugin';
 import { PluginListenerHandle } from '@capacitor/core';
-
+import { ActivityService } from '../../services/activity-service';
 @Component({
   imports: [RouterOutlet],
   selector: 'app-main',
@@ -15,18 +15,27 @@ export class main {
   protected readonly title = signal('move');
   private router = inject(Router);
   private geoLocService = inject(GeolocationService)
-
+  private activityService = inject(ActivityService)
 
   async ngOnInit() {
-    DatabaseManager.init();
-    if (!await this.geoLocService.getPermissionState()) {
-      this.router.navigate(['permissions'])
-      return
+    try {
+      await DatabaseManager.init();
+
+      // The database is ready here.
+      if (!DatabaseManager.isReady) {
+        throw new Error("Database is not ready.");
+      }
+
+      if (!await this.geoLocService.getPermissionState()) {
+        await this.router.navigate(["permissions"]);
+        return;
+      }
+      await this.router.navigate(["activities"]);
+
+    } catch (error) {
+      console.error("Failed to initialize the database (required for the app to function). Error:", error);
+      // Show an error message or retry option to the user.
     }
-    this.router.navigate(['activities'])
   }
 
-  protected resetDatabase() {
-    DatabaseManager.resetDatabase();
-  }
 }

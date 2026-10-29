@@ -1,10 +1,67 @@
 <h1>Activity Details</h1>
-<app-text-box
-    [textBoxId]="'activityName'"
-    [textBoxName]="'activityName'"
-    containerStyles="w-50"
-    [fieldComment]="'A recognizable name for this activity.'"
-    [labelText]="'Activity name'"
-    [placeholderText]="'My amazing adventure!'"
-    (onTextChange)="onNameChange($event)"
-/>
+@if(!hasStarted()) {
+<app-text-box [textBoxId]="'activityName'" [textBoxName]="'activityName'" containerStyles="w-50"
+    [fieldComment]="'A recognizable name for this activity.'" [labelText]="'Activity name'"
+    [placeholderText]="'My amazing adventure!'" (onTextChange)="onNameChange($event)" [prefillText]="activityName" />
+
+<button class="btn btn-primary" (click)="createActivity()">Start</button>
+}
+@else {
+<div class="row">
+    <div class="col">
+        <a [routerLink]="['/activities']" class="btn btn-secondary">Back to overview</a>
+    </div>
+    @if(!isStored()) {
+    <div class="col">
+        <!-- <button class="btn btn-primary" [disabled]="isTracking()" (click)="startTracking()">Start tracking</button> -->
+        <button class="btn btn-warning" [disabled]="!isTracking()" (click)="stopTracking()">Stop tracking</button>
+    </div>
+    }
+</div>
+
+
+<!-- Row 1: Title -->
+<div class="row">
+    <div class="col">
+        <h2>{{ activityName }}</h2>
+        <strong>Category comes here</strong>
+    </div>
+</div>
+<!-- Row 2: Time spent, started/stopped -->
+<div class="row">
+    <!-- Start -->
+    <div class="col">
+        <h3>Started at</h3>
+        @if(!isStored()){
+        {{ startedAt | date:'HH:mm' }}
+        }
+        @else {
+        {{ startedAt | date:'yyyy-MM-dd HH:mm' }}
+        }
+
+    </div>
+    <!-- Stop / current progress-->
+    <div class="col">
+        @if(!isStored()){
+        <h3>Time spent</h3>
+        {{ formatDuration(elapsedSeconds) }}
+        }
+        @else {
+        <h3>Stopped at</h3>
+        @if(endedAt) {
+        {{ endedAt | date:'yyyy-MM-dd HH:mm' }}
+        }
+        @else {
+        <i>Not ended</i>
+        }
+        }
+    </div>
+</div>
+}
+<!-- https://leafletjs.com/examples/quick-start/ -->
+<!-- https://leafletjs.com/ -->
+<!-- https://stackoverflow.com/questions/925164/openstreetmap-embedding-map-in-webpage-like-google-maps -->
+<!-- https://www.npmjs.com/package/leaflet -->
+<!-- Last stable is 1.9.4, released a year ago from 2026 -->
+<!-- npm install leaflet @types/leaflet -->
+<div id="map" style="height: 400px; width: 400px; margin: 0 auto;"></div>

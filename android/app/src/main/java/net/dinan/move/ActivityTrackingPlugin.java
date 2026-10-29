@@ -47,7 +47,7 @@ public class ActivityTrackingPlugin extends Plugin {
       @Override
       public void onReceive(Context context, Intent intent) {
         JSObject data = new JSObject();
-
+        data.put("locationIndex",intent.getIntExtra("locationIndex",0));
         data.put("latitude", intent.getDoubleExtra("latitude", 0));
         data.put("longitude", intent.getDoubleExtra("longitude", 0));
         data.put("timestamp", intent.getLongExtra("timestamp", 0));
@@ -80,20 +80,20 @@ public class ActivityTrackingPlugin extends Plugin {
 
   @PluginMethod
   public void startTracking(PluginCall call) {
-    String activityId = call.getString("activityId");
-
-    if (activityId == null || activityId.isEmpty()) {
-      call.reject("activityId is required");
-      return;
-    }
+//    String activityId = call.getString("activityId");
+//
+//    if (activityId == null || activityId.isEmpty()) {
+//      call.reject("activityId is required");
+//      return;
+//    }
 
     Intent intent = new Intent(
       getContext(), ActivityTrackingService.class
     );
     intent.setAction(ActivityTrackingService.ACTION_START);
-    intent.putExtra(
-      ActivityTrackingService.EXTRA_ACTIVITY_ID, activityId
-    );
+//    intent.putExtra(
+//      ActivityTrackingService.EXTRA_ACTIVITY_ID, activityId
+//    );
 
     try {
       androidx.core.content.ContextCompat.startForegroundService(
@@ -114,6 +114,33 @@ public class ActivityTrackingPlugin extends Plugin {
 
     getContext().startService(intent);
     call.resolve();
+  }
+
+  @PluginMethod
+  public void streamLocations(PluginCall call) {
+    String activityId = call.getString("activityId");
+
+    if (activityId == null || activityId.isEmpty()) {
+      call.reject("activityId is required");
+      return;
+    }
+
+    Intent intent = new Intent(
+      getContext(), ActivityTrackingService.class
+    );
+    intent.setAction(ActivityTrackingService.ACTION_STREAMLOCATIONS);
+    intent.putExtra(
+      ActivityTrackingService.EXTRA_ACTIVITY_ID, activityId
+    );
+
+    try {
+      androidx.core.content.ContextCompat.startForegroundService(
+        getContext(), intent
+      );
+      call.resolve();
+    } catch (Exception e) {
+      call.reject("Could not start tracking service", e);
+    }
   }
 
   @PluginMethod
