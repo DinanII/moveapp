@@ -12,7 +12,7 @@ import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DatabaseManager } from '../../services/DatabaseManager';
 @Component({
-  imports: [TextBox, DatePipe, RouterLink],
+  imports: [TextBox, DatePipe],
   selector: 'app-activity-detail',
   styleUrl: './activity-detail.css',
   templateUrl: './activity-detail.html',
