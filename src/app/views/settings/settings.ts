@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DatabaseManager } from '../../services/DatabaseManager';
 
 @Component({
   imports: [],
@@ -6,4 +7,8 @@ import { Component } from '@angular/core';
   styleUrl: './settings.css',
   templateUrl: './settings.html',
 })
-export class Settings {}
+export class Settings {
+  protected resetDatabase() {
+    DatabaseManager.resetDatabase()
+  }
+}

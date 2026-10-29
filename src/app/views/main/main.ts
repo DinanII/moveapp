@@ -5,8 +5,9 @@ import { DatabaseManager } from '../../services/DatabaseManager';
 import { ActivityTracking } from '../../services/activity-tracking.plugin';
 import { PluginListenerHandle } from '@capacitor/core';
 import { ActivityService } from '../../services/activity-service';
+import { RouterLink } from '@angular/router';
 @Component({
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterLink],
   selector: 'app-main',
   styleUrl: './main.css',
   templateUrl: './main.html',

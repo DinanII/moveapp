@@ -3,6 +3,7 @@ import { main } from './views/main/main';
 import { PermissionsOverview } from './views/permissions-overview/permissions-overview';
 import { ActivitiesOverview } from './views/activities-overview/activities-overview';
 import { ActivityDetail } from './views/activity-detail/activity-detail';
+import { Settings } from './views/settings/settings';
 export const routes: Routes = [
     {
         path: "",
@@ -19,5 +20,9 @@ export const routes: Routes = [
     {
         path: "activities/detail/:id",
         component: ActivityDetail
+    },
+    {
+        path: "settings",
+        component: Settings
     }
 ];

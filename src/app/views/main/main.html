@@ -1,3 +1,10 @@
 <div class="container">
-    <router-outlet />
+    <div class="row">
+        <div class="col-6">
+            <a [routerLink]="['/activities']" class="btn btn-secondary">Back to overview</a>
+        </div>
+    </div>
+    <div class="row">
+        <router-outlet />
+    </div>
 </div>

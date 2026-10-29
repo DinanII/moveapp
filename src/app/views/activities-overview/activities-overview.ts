@@ -21,6 +21,10 @@ export class ActivitiesOverview {
     this.router.navigate([`activities/detail/${activityId}`])
   }
 
+  protected routeToSettings() {
+    this.router.navigate([`settings`])
+  }
+
   async ngOnInit() {
     await this.activityService.retrieveActivities()
     // There is at least one page before and after
@@ -41,10 +45,6 @@ export class ActivitiesOverview {
       this.nextEnabled.set(false)
       return;
     }
-  }
-
-  protected resetDatabase() {
-    DatabaseManager.resetDatabase()
   }
 
   protected async pageBack() {
