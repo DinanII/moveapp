@@ -143,6 +143,13 @@ public class ActivityTrackingPlugin extends Plugin {
     }
   }
 
+  public void getListener(PluginCall call) {
+    Intent intent = new Intent(
+      getContext(), ActivityTrackingService.class
+    );
+    intent.setAction(ActivityTrackingService.ACTION_GET_LISTENER);
+  }
+
   @PluginMethod
   public void getRecordedLocations(PluginCall call) {
     String activityId = call.getString("activityId");

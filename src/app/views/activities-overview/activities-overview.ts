@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { ActivityService } from '../../services/activity-service';
 import { DatePipe } from '@angular/common';
 import { DatabaseManager } from '../../services/DatabaseManager';
+import { DateUtilsService } from '../../services/date-utils-service';
+
 @Component({
   imports: [DatePipe],
   selector: 'app-activities-overview',
@@ -12,6 +14,7 @@ import { DatabaseManager } from '../../services/DatabaseManager';
 export class ActivitiesOverview {
 
   private router = inject(Router)
+  protected dateUtilsService = inject(DateUtilsService)
   protected activityService = inject(ActivityService)
   protected backEnabled = signal(false)
   protected nextEnabled = signal(true)
@@ -19,10 +22,6 @@ export class ActivitiesOverview {
 
   protected routeToActivity(activityId: number) {
     this.router.navigate([`activities/detail/${activityId}`])
-  }
-
-  protected routeToSettings() {
-    this.router.navigate([`settings`])
   }
 
   async ngOnInit() {

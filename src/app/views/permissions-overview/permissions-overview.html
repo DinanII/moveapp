@@ -6,7 +6,24 @@
     <app-switch labelText="Location permission" [inputValue]="isLocPermitted()" [isEnabled]="!isLocPermitted()"
         (onSwitchToggle)="askLocPerm()" />
 
-    <p>Permission: {{ isLocPermitted() }}</p>
-    <p>Enabled: {{ !isLocPermitted() }}</p>
+    @switch (this.geoLocService.permStatus()) {
+    @case(StatusCodes.UNKNOWN) {
+    <p class="alert alert-secondary">{{ this.geoLocService.geoPermMessage() }}</p>
+    }
+    @case(StatusCodes.OK) {
+    <p class="alert alert-success">{{ this.geoLocService.geoPermMessage() }}</p>
+    }
+    @case(StatusCodes.WARN) {
+    <p class="walert alert-warning">{{ this.geoLocService.geoPermMessage() }}</p>
+    }
+    @case(StatusCodes.ERROR || StatusCodes.CRITICAL ) {
+    <p class="alert alert-danger">{{ this.geoLocService.geoPermMessage() }}</p>
+    }
+    }
+
+
+    <!-- <p>Permission: {{ isLocPermitted() }}</p>
+    <p>Enabled: {{ !isLocPermitted() }}</p> -->
 </div>
-<button class="btn btn-primary" (click)="navToActivities()" [disabled]="!isLocPermitted()">Go to Activities</button>
+<!-- [disabled]="!isLocPermitted()" -->
+<button class="btn btn-primary" (click)="navToActivities()">Go to Activities</button>

@@ -1,11 +1,5 @@
 <div class="row">
     <h1>Registered Activities</h1>
-    <button class="btn btn-secondary col-6" (click)="routeToSettings()"  [disabled]="activityService.isActivityOngoing()">Settings</button>
-    @if(activityService.isActivityOngoing()) {
-        <p>Settings cannot be edited during an activiy.</p>
-    }
-</div>
-<div class="row">
     <p>This is an overview of all the activities you registered with this app. Click on an activity to view more
         details or create a new one!</p>
 </div>
@@ -25,7 +19,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Start</th>
-                <th scope="col">End</th>
+                <th scope="col">Duration</th>
             </tr>
         </thead>
         <tbody>
@@ -33,8 +27,8 @@
             <tr (click)="routeToActivity(activity.activityId)">
                 <td>{{ activity.activityId }}</td>
                 <td>{{ activity.activityName }}</td>
-                <td>{{ activity.startedAt | date:'yyyy-MM-dd HH:mm' }}</td>
-                <td>{{ activity.endedAt | date:'yyyy-MM-dd HH:mm' }}</td>
+                <td>{{ activity.startedAt*1000 | date:'yyyy-MM-dd' }}</td>
+                <td>{{ activity.endedAt !== null ? dateUtilsService.formatDuration(activity.endedAt - activity.startedAt) : 'Not ended' }}</td>
             </tr>
             }
         </tbody>
@@ -44,7 +38,7 @@
 <div class="row">
     <!--next prev. buttons-->
     <div class="col">
-        <button class="btn btn-primary" [disabled]="!backEnabled()" (click)="pageBack()" >Back</button>
-        <button class="btn btn-primary" [disabled]="!nextEnabled()" (click)="pageNext()" >Next</button>
+        <button class="btn btn-primary" [disabled]="!backEnabled()" (click)="pageBack()">Back</button>
+        <button class="btn btn-primary" [disabled]="!nextEnabled()" (click)="pageNext()">Next</button>
     </div>
 </div>

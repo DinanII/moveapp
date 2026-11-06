@@ -22,6 +22,8 @@ export interface ActivityTrackingPlugin {
         eventName: 'locationRecorded',
         listenerFunc: (location: RecordedLocation) => void
     ): Promise<PluginListenerHandle>
+
+    // getListener(): Promise<PluginListenerHandle|null>
 }
 
 export const ActivityTracking =

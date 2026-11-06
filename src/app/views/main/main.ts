@@ -7,7 +7,7 @@ import { PluginListenerHandle } from '@capacitor/core';
 import { ActivityService } from '../../services/activity-service';
 import { RouterLink } from '@angular/router';
 @Component({
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet],
   selector: 'app-main',
   styleUrl: './main.css',
   templateUrl: './main.html',
@@ -26,7 +26,7 @@ export class main {
       if (!DatabaseManager.isReady) {
         throw new Error("Database is not ready.");
       }
-
+      console.log(`0000000000000000000`)
       if (!await this.geoLocService.getPermissionState()) {
         await this.router.navigate(["permissions"]);
         return;
@@ -37,6 +37,10 @@ export class main {
       console.error("Failed to initialize the database (required for the app to function). Error:", error);
       // Show an error message or retry option to the user.
     }
+  }
+
+  protected routeToSettings() {
+    this.router.navigate([`settings`])
   }
 
 }

@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Switch } from '../../components/userinput/switch/switch';
 import { GeolocationService } from '../../services/GeolocationService';
 import { Router } from '@angular/router';
+import { StatusCodes } from '../../enums/status-codes';
 @Component({
   imports: [Switch],
   selector: 'app-permissions-overview',
@@ -10,18 +11,22 @@ import { Router } from '@angular/router';
 })
 export class PermissionsOverview implements OnInit {
 
-  private geoLocService = inject(GeolocationService);
+  protected geoLocService = inject(GeolocationService);
 
   private router = inject(Router)
 
   protected isLocPermitted = signal(false);
+
+  protected get StatusCodes() {
+    return StatusCodes;
+  }
 
   async ngOnInit(): Promise<void> {
     this.isLocPermitted.set(await this.geoLocService.getPermissionState());
 
     console.log(
       'Overview perm permitted:',
-      this.isLocPermitted
+      JSON.stringify(this.isLocPermitted())
     );
 
 

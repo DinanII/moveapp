@@ -37,6 +37,8 @@ public class ActivityTrackingService extends Service {
     public static final String EXTRA_ACTIVITY_ID = "activityId";
     public static final String ACTION_STREAMLOCATIONS = "tracking.STREAMLOCATIONS";
 
+    public static final String ACTION_GET_LISTENER = "tracking.ACTION_GETLISTENER";
+
     // private FusedLocationProviderClient locationClient;
     private android.location.LocationManager locationManager;
     private android.location.LocationListener locationListener;

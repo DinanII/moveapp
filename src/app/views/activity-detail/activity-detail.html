@@ -1,21 +1,34 @@
-<h1>Activity Details</h1>
+<div class="row">
+    <div class="col">
+        <h2>Activity Details</h2>
+    </div>
+    <div class="col">
+        <a [routerLink]="['/activities']" class="btn btn-secondary">Back to overview</a>
+    </div>
+</div>
 @if(!hasStarted()) {
 <app-text-box [textBoxId]="'activityName'" [textBoxName]="'activityName'" containerStyles="w-50"
     [fieldComment]="'A recognizable name for this activity.'" [labelText]="'Activity name'"
     [placeholderText]="'My amazing adventure!'" (onTextChange)="onNameChange($event)" [prefillText]="activityName" />
 
-<button class="btn btn-primary" (click)="createActivity()">Start</button>
+<button class="btn btn-primary" (click)="createActivity()" [disabled]="activityName.length < 1">Start</button>
 }
 @else {
+@if(isTracking()) {
 <div class="row">
-    @if(!isStored()) {
     <div class="col">
         <!-- <button class="btn btn-primary" [disabled]="isTracking()" (click)="startTracking()">Start tracking</button> -->
-        <button class="btn btn-warning" [disabled]="!isTracking()" (click)="stopTracking()">Stop tracking</button>
+        <button class="btn btn-warning" (click)="stopTracking()">Stop tracking</button>
     </div>
-    }
 </div>
-
+}
+@if(isStored()){
+<div class="row">
+    <div class="col">
+        <button class="btn btn-danger" (click)="deleteActivity()" >Delete activity</button>
+    </div>
+</div>
+}
 
 <!-- Row 1: Title -->
 <div class="row">
@@ -26,34 +39,42 @@
 </div>
 <!-- Row 2: Time spent, started/stopped -->
 <div class="row">
-    <!-- Start -->
+    <!-- Start timestamp -->
     <div class="col">
-        <h3>Started at</h3>
-        @if(!isStored()){
-        {{ startedAt | date:'HH:mm' }}
+        <h3>Started</h3>
+        @if(isStored()){
+        {{ startedAt*1000 | date:'yyyy-MM-dd HH:mm' }}
         }
         @else {
-        {{ startedAt | date:'yyyy-MM-dd HH:mm' }}
+        {{ startedAt*1000 | date:'HH:mm' }}
         }
-
     </div>
+
+    <!-- Duration for stored -->
+    @if(isStored()) {
+    <div class="col">
+        <h3>Duration</h3>
+        {{ endedAt !== null ? dateUtilsService.formatDuration(endedAt - startedAt) : 'Not ended' }}
+    </div>
+    }
     <!-- Stop / current progress-->
     <div class="col">
-        @if(!isStored()){
-        <h3>Time spent</h3>
-        {{ formatDuration(elapsedSeconds) }}
-        }
-        @else {
-        <h3>Stopped at</h3>
+        @if(isStored()){
+        <h3>Stopped</h3>
         @if(endedAt) {
-        {{ endedAt | date:'yyyy-MM-dd HH:mm' }}
+        {{ endedAt*1000| date:'yyyy-MM-dd HH:mm' }}
         }
         @else {
         <i>Not ended</i>
         }
         }
+        @else {
+        <h3>Time spent</h3>
+        {{ formattedDuration() }}
+        }
     </div>
 </div>
+
 }
 <!-- https://leafletjs.com/examples/quick-start/ -->
 <!-- https://leafletjs.com/ -->
@@ -61,4 +82,6 @@
 <!-- https://www.npmjs.com/package/leaflet -->
 <!-- Last stable is 1.9.4, released a year ago from 2026 -->
 <!-- npm install leaflet @types/leaflet -->
-<div id="map" style="height: 400px; width: 400px; margin: 0 auto;"></div>
+<!-- Failed to initialize when not directly visible (e.g. in the template-if-block above). -->
+<div id="map" style="width: 70vw; height: 60vh; margin: 0 auto;"></div>
+<!-- style="height: 400px; width: 400px; margin: 0 auto;" -->

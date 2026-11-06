@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DatabaseManager } from '../../services/DatabaseManager';
+import { Router } from '@angular/router';
 
 @Component({
   imports: [],
@@ -8,7 +9,17 @@ import { DatabaseManager } from '../../services/DatabaseManager';
   templateUrl: './settings.html',
 })
 export class Settings {
+  private router = inject(Router)
   protected resetDatabase() {
-    DatabaseManager.resetDatabase()
+    if (confirm('Are you sure you want to reset the database?')) {
+      var activityBtnEl = <HTMLButtonElement>document.getElementById("activityBtn");
+      activityBtnEl.disabled = true;
+      DatabaseManager.resetDatabase();
+
+    }
+  }
+
+  protected routeToActivities() {
+    this.router.navigate([`activities`])
   }
 }

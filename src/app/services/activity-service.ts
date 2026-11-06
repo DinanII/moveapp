@@ -1,12 +1,11 @@
-import { Service, signal } from '@angular/core';
+import { inject, Service, signal } from '@angular/core';
 import { DatabaseManager } from './DatabaseManager';
 import { Observable } from 'rxjs';
 import { RecordedLocation } from '../interfaces/recorded-location';
 import { Activity } from '../interfaces/activity';
+import { DateUtilsService } from './date-utils-service';
 @Service()
 export class ActivityService {
-
-    private activityId: number = -1
 
     // private writable state
     private readonly _activities = signal<Activity[]>([]);
@@ -23,13 +22,15 @@ export class ActivityService {
 
     private isMaxPageReached: boolean = false
 
+    private dateUtilsService = inject(DateUtilsService)
+
     async createActivity(activityName: string, categoryId: number): Promise<number> {
         if (!await this.isDatabaseReady() || categoryId < 1 || this.isActivityOngoing()) return -1
         const newActivity: Activity = {
             activityId: -1,
             activityName: activityName,
             acatId: categoryId,
-            startedAt: Math.floor(Date.now() / 1000),
+            startedAt: this.dateUtilsService.getUnixTime(),
             endedAt: null,
         }
         const insertResult = await DatabaseManager.performQuery(
@@ -40,12 +41,11 @@ export class ActivityService {
         if (insertResult != null && insertResult.changes) {
             console.log(`The changes: `, JSON.stringify(insertResult))
             console.log(`Typeof ${typeof insertResult}`)
-            this.activityId = insertResult.changes.lastId ?? -1
             this._activities.update((activities) => {
                 return [newActivity, ...activities]
             })
             this._isActivityOngoing.set(true)
-            return this.activityId
+            return insertResult.changes.lastId ?? -1
         }
         console.error(`Insert activity Failed! ${JSON.stringify(insertResult)}`)
         return -1
@@ -58,7 +58,17 @@ export class ActivityService {
     async endActivity(activityId: number): Promise<boolean> {
         if (!await this.isDatabaseReady()) return false
         // set activity.end to Date.now()
+        const updateResult = await DatabaseManager.performQuery(
+            'modify',
+            'UPDATE activities SET ac_ended_at = ? WHERE ac_id = ?',
+            [this.dateUtilsService.getUnixTime(), activityId]
+        )
         this._isActivityOngoing.set(false)
+        if (updateResult != null && updateResult.changes) {
+            console.log(`The changes: `, JSON.stringify(updateResult))
+            console.log(`Typeof ${typeof updateResult}`)
+            return true
+        }
         return false
     }
 
@@ -81,8 +91,8 @@ export class ActivityService {
             const retrievedActivities: Activity[] = getResult.values.map((row) => ({
                 activityId: Number(row["ac_id"]),
                 activityName: String(row["ac_name"]),
-                startedAt: Number(row["ac_started_at"]) * 1000,
-                endedAt: row["ac_ended_at"] === null ? null : Number(row["ac_ended_at"]) * 1000,
+                startedAt: Number(row["ac_started_at"]),
+                endedAt: row["ac_ended_at"] === null ? null : Number(row["ac_ended_at"]),
                 acatId: Number(row["ac_acat_id"]),
             }));
             if (retrievedActivities.length < DatabaseManager.pageSize) {
@@ -151,13 +161,13 @@ export class ActivityService {
         return -1
     }
 
-    async storeLocationPoint(location: RecordedLocation): Promise<boolean> {
-        if (!await this.isDatabaseReady() && this.activityId < 1) return false
+    async storeLocationPoint(location: RecordedLocation, activityId: number): Promise<boolean> {
+        if (!await this.isDatabaseReady() && activityId < 1) return false
 
         const insertResult = await DatabaseManager.performQuery(
             "modify",
             "INSERT INTO geolocation_points (glp_latitude, glp_longitude, glp_ac_id, glp_index, glp_timestamp, glp_accuracy) VALUES (?, ?, ?, ?, ?, ?)",
-            [location.latitude, location.longitude, this.activityId, location.locationIndex, location.timestamp, location.accuracy]
+            [location.latitude, location.longitude, activityId, location.locationIndex, location.timestamp, location.accuracy]
         )
         if (insertResult != null && insertResult.changes) {
             console.log(`The changes: `, JSON.stringify(insertResult))
@@ -169,5 +179,50 @@ export class ActivityService {
         return false
     }
 
+    async deleteActivity(activityId: number) {
+        if (!await this.isDatabaseReady() || activityId < 1) return false
 
+        try {
+            return await this.directlyDeleteAcivity(activityId)
+        } catch (error) {
+            console.error(`delete activity failed, del data seperatly`)
+            return await this.deleteDataSeparately(activityId)
+        }
+
+    }
+    private async directlyDeleteAcivity(activityId: number): Promise<boolean> {
+        const delResult = await DatabaseManager.performQuery(
+            'modify',
+            'DELETE FROM activities WHERE ac_id = ?',
+            [activityId]
+        )
+
+        if (delResult != null && delResult.changes) {
+            console.log(`The changes (delete ac): `, JSON.stringify(delResult))
+            console.log(`Typeof (delete ac) ${typeof delResult}`)
+            if (delResult.changes.changes && delResult.changes.changes > 0) {
+                this._activities.set(this._activities().filter((activity) => {
+                    activity.acatId !== activityId
+                }))
+                return true
+            }
+        }
+        return false
+    }
+
+    private async deleteDataSeparately(activityId: number): Promise<boolean> {
+        const delLocsResult = await DatabaseManager.performQuery(
+            'modify',
+            'DELETE FROM geolocation_points WHERE glp_ac_id = ?',
+            [activityId]
+        )
+        console.log(`The changes (delete ac locs): `, JSON.stringify(delLocsResult))
+        console.log(`Typeof (delete ac locs) ${typeof delLocsResult}`)
+        // Are location points deleted
+        if (delLocsResult != null && delLocsResult.changes && delLocsResult.changes.changes && delLocsResult.changes.changes > 0) {
+            // Delete the actual activity
+            return await this.directlyDeleteAcivity(activityId)
+        }
+        return false
+    }
 }

@@ -1,9 +1,14 @@
 <div class="row">
-    <h1>Settings</h1>
-    <p>This page contains various settings related to this app. Will be adjusted further during the development of this app.</p>
+    <div class="d-flex justify-content-between">
+        <h1>Settings</h1>
+        <button  (click)="routeToActivities()" class="btn btn-secondary" id="activityBtn">To Activity overview</button>
+    </div>
+    <p>This page contains various settings related to this app. Will be adjusted further during the development of this
+        app.</p>
 </div>
 <div class="row">
-    <h2>Danger zone</h2>
-    <p>Only meant for development purposes!</p>
-    <button class="btn btn-danger w-50 mx-auto" (click)="resetDatabase()">Reset database</button>
+    <h3>Wipe database</h3>
+    <p>Useful if you want to start from a clean slate. Be aware the reset is permanent and therefore cannot be reversed. The app does not contain a backup or export and import feature.</p>
+    <p>Close the app entirely after resetting to ensure everything is wiped (the app does this not by itself yet).</p>
+    <button class="btn btn-danger d-inline" (click)="resetDatabase()">Reset database</button>
 </div>

@@ -1,10 +1,12 @@
-<div class="container">
-    <div class="row">
-        <div class="col-6">
-            <a [routerLink]="['/activities']" class="btn btn-secondary">Back to overview</a>
+<div class="container bg-body-secondary d-flex flex-column gap-3 p-4 vh-100">
+    <div class="row bg-body rounded-2 p-1">
+        <div class="d-flex justify-content-between">
+            <h1 class="m-0 p-0 d-inline">Move</h1>
+            <button class="btn btn-secondary d-inline" (click)="routeToSettings()">Settings</button>
+            <!-- [disabled]="activityService.isActivityOngoing() -->
         </div>
     </div>
-    <div class="row">
+    <div class="row bg-body rounded-2 py-1">
         <router-outlet />
     </div>
 </div>

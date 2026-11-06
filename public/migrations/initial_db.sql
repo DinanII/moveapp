@@ -34,8 +34,19 @@ CREATE TABLE IF NOT EXISTS "geolocation_points" (
 	"glp_timestamp" INTEGER NOT NULL,
 	"glp_accuracy" INTEGER NOT NULL,
 	-- PRIMARY KEY("glp_id"),
-	FOREIGN KEY (glp_ac_id) REFERENCES activities(ac_id)
+	FOREIGN KEY (glp_ac_id) REFERENCES activities(ac_id) ON DELETE CASCADE
 );
+-- Bij oude database versies is de ON DELETE CASCADE er nog niet (bij verwijderen van activiteit dus eerst bestaande locaties verwijderen)
+-- DELETE FROM geolocation_points
+-- WHERE glp_ac_id IN (
+--     SELECT ac_id
+--     FROM activities
+--     WHERE ac_name = 'Test activiteit'
+-- );
+-- Let op de conditie van de activity in zowel de vorige als de volgende query.
+-- DELETE FROM activities
+-- WHERE ac_name = 'Test activiteit'
+
 
 INSERT INTO `geolocation_points` (glp_latitude, glp_longitude, glp_ac_id, glp_index, glp_timestamp, glp_accuracy) VALUES (51.536378, 4.275150, 1, 1,  1, 0.35);
 INSERT INTO `geolocation_points` (glp_latitude, glp_longitude, glp_ac_id, glp_index, glp_timestamp, glp_accuracy) VALUES (51.536440, 4.275156, 1, 2,  2, 0.35);
