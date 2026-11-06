@@ -178,7 +178,8 @@ export class ActivityService {
         }
         return false
     }
-
+    
+    // In existing databases, the ON DELETE rule for the activities-geo location points is not set properly. But it is fixed in newer versions.
     async deleteActivity(activityId: number) {
         if (!await this.isDatabaseReady() || activityId < 1) return false
 
